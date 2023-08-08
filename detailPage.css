@@ -1,0 +1,61 @@
+/* Add these styles to your existing CSS or create a new CSS file */
+#pageHeading  {
+    text-align: center;
+    font-size: 3vw;
+    background: black;
+    color: white;
+    padding: 20px;
+    margin: 0px;
+}
+
+#movie-detailPage {
+    padding: 20px;
+    display: flex;
+}
+#detail-image{
+    /* flex: 50%; */
+}
+#detail-container{
+    padding-left: 20vh;
+}
+#movieDetails-title {
+    font-size: 40px;
+    margin-top: 10px;
+   
+}
+
+#movieDetails-poster {
+    max-width: 80vw;
+    height: 80vh;
+    margin-top: 15px;
+    border: 2px solid #343a40;
+    border-radius: 5px;
+}
+
+#movieDetails-plot,
+#movieDetails-year,
+#movieDetails-director,
+#movieDetails-genre {
+    margin-top: 10px;
+}
+
+/* Optional: Custom styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+
+
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+    #movie-details {
+        padding: 10px;
+    }
+}
