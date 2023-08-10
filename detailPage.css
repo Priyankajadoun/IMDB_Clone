@@ -14,7 +14,7 @@
 }
 
 #detail-container{
-    padding-left: 20vh;
+    padding-left: 2rem;
 }
 #movieDetails-title {
     font-size: 40px;
@@ -53,6 +53,11 @@ body {
 
 /* Adjustments for smaller screens */
 @media (max-width: 768px) {
+    #movie-details {
+        padding: 10px;
+    }
+}
+@media (max-width: 900px) {
     #movie-details {
         padding: 10px;
     }

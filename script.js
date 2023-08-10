@@ -21,6 +21,18 @@ $('#go-detailspage').click(function(){
 
 
 $(document).ready(function() {
+
+  // handle the searc button by keypress(enter)
+  $("#search-input").on("keypress", function (event) {
+    if (event.keyCode === 13) {
+      // Prevent form submission
+      event.preventDefault();
+  
+      // Call the fetchMovie function when Enter is pressed
+      fetchMovie();
+    }
+  });
+  
  
 // Hide the "Add to Favorite",' movie image ' and 'details Button' button initially
 $('#add-favorite').hide();
@@ -89,7 +101,6 @@ $('#movie-poster').hide();
       movieDetails(e.target.value)
         .then(function (data) {
           updateMovieDetails(data);
-          // Rest of the search result logic goes here...
         })
         .catch(function (error) {
           console.error(error);
@@ -193,6 +204,8 @@ function movieDetails(titleName) {
 // search result 
 function searchResult(e){
   clearSearchResults(); // Clear previous search results
+   // Clear the previous error message
+   $('#notFound').text('');
   var Req = new XMLHttpRequest();
   Req.onload = function(){
   // console.log(Req.response);
@@ -216,27 +229,13 @@ function searchResult(e){
     // Get the value on keydown event
     title = e.target.value;
     console.log(title);
-    var addFavoriteButton = $('#add-favorite');
-    var detailButton = $("#go-detailspage");
-    var movieImage = $('#movie-poster');
     var searchUl = $('#movie-search');
+
   
-    if (title === '') {
-      addFavoriteButton.hide(); // Hide the "Add to Favorite" button when no input
-      detailButton.hide();// Hide the "details button" button when no input
-      movieImage.hide();// Hide the "movieImage" button when no input
-      return; // If the input is empty, do nothing (no need to show any results)
-    } else {
-      addFavoriteButton.show(); // Show the "Add to Favorite" button when input is present
-      detailButton.show();// Show the "details button" button when input is present
-      movieImage.show()// Show the "movieImage" button when input is present
-    }
-   
-  
-    var searchUl = $('#movie-search');
     searchArr.forEach(function (movie) {
       console.log(!movie.Error);
       if(!movie.Error){
+        console.log(movie)
       var movieSearchTitle = movie.Title;
       var movieSearchImg = movie.Poster;
       var movieSearchYear = movie.Year;
@@ -342,18 +341,24 @@ function searchResult(e){
   
       var searchLi = $('<li>',{
         style: 'margin: 20px; box-shadow:rgb(137 137 136 / 40%) -5px 5px, rgb(121 121 121 / 30%) -10px 10px, rgb(109 109 108 / 20%) -15px 15px, rgb(129 129 129 / 10%) -20px 20px, rgb(101 101 100 / 8%) -25px 25px;'
-        // style: 'margin: 20px; box-shadow:rgb(240 200 46 / 40%) -5px 5px, rgb(240 236 46 / 30%) -10px 10px, rgb(240 236 46 / 20%) -15px 15px, rgb(240 236 46 / 10%) -20px 20px, rgb(240 200 46 / 8%) -25px 25px;'
-
+      
       });
       searchLi.append(searchCard);
   
       searchUl.append(searchLi);
+    }else{
+      console.log(movie)
+      if(movie.Response==false){
+      $('#notFound').text(movie.Error)
+      }
     }
     }); 
   }
 
   Req.open('get',`http://www.omdbapi.com/?i=tt3896198&apikey=fc60a832&t=${title}`,true);
   Req.send();
+
+  
 }
 
 
@@ -436,6 +441,38 @@ function fetchMovie(){
         searchedResult = [];
         searchedResult.push(responseJSON);
         console.log(searchedResult)
+//  check if the Error property exists in any of the objects in the array
+        var hasErrorProperty = false;
+
+searchedResult.forEach(function(movie) {
+  if ("Error" in movie) {
+    hasErrorProperty = true;
+  }
+});
+console.log(hasErrorProperty);
+console.log(!hasErrorProperty);
+if(hasErrorProperty){
+  $('#notFound').text(responseJSON.Error)
+}
+if(!hasErrorProperty){
+  $('#add-favorite').show(); // show the "Add to Favorite" button when no input
+  $("#go-detailspage").show();
+  $('#movie-poster').show();
+  $('#movie-title').show();
+  $('#movie-year').show();
+  $('#movie-director').show();
+  $('#movie-genre').show();
+
+}else{
+
+  $('#add-favorite').hide(); // Hide the "Add to Favorite" button when no input
+  $("#go-detailspage").hide();
+  $('#movie-poster').hide();
+  $('#movie-title').hide();
+  $('#movie-year').hide();
+  $('#movie-director').hide();
+  $('#movie-genre').hide();
+}
         $('#movie-title').text(responseJSON.Title);
         $('#movie-poster').attr('src',responseJSON.Poster);
         $('#movie-plot').text(responseJSON.Plot);
