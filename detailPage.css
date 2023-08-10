@@ -53,12 +53,19 @@ body {
 
 /* Adjustments for smaller screens */
 @media (max-width: 768px) {
-    #movie-details {
+    #movie-detailPage {
         padding: 10px;
     }
 }
 @media (max-width: 900px) {
-    #movie-details {
-        padding: 10px;
+    #movie-detailPage{
+        display: block;
+    }
+   #detail-image {
+        display: flex;
+    justify-content: center;
+    }
+    #movieDetails-title{
+        text-align: center;
     }
 }
