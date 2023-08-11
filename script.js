@@ -7,10 +7,10 @@ var likedMovies = [];
 var ht = window.innerHeight - 45.5;
 var viewportHeight = $('footer').css('top', ht + 'px');
 var movieData = []; // Initialize movieData as an empty array
-var searchedResult=[];
+var searchedResult = [];
 
 
-$('#go-detailspage').click(function(){
+$('#go-detailspage').click(function () {
   searchedResult = JSON.parse(localStorage.getItem('searchedResult')) || [];
   searchedTitle = searchedResult[0].Title;
   console.log(searchedTitle)
@@ -20,108 +20,107 @@ $('#go-detailspage').click(function(){
 
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
+  // Display the search results on the home page
+  displaySearchResults();
+   // Display the searched movie on the home page
+  displaySearchedMovie();
   // handle the searc button by keypress(enter)
   $("#search-input").on("keypress", function (event) {
     if (event.keyCode === 13) {
       // Prevent form submission
       event.preventDefault();
-  
+
       // Call the fetchMovie function when Enter is pressed
       fetchMovie();
     }
   });
-  
- 
-// Hide the "Add to Favorite",' movie image ' and 'details Button' button initially
-$('#add-favorite').hide();
-$('#go-detailspage').hide();
-$('#movie-poster').hide();
+
 
   function remove(titleToRemove) {
     console.log(titleToRemove);
     console.log(favMoviePageData);
-  
+
     var indexToRemove = favMoviePageData.findIndex(function (movie) {
       return movie.favTitle === titleToRemove;
     });
-  
+
     if (indexToRemove !== -1) {
       favMoviePageData.splice(indexToRemove, 1);
       console.log(favMoviePageData);
       localStorage.setItem('favMoviePageData', JSON.stringify(favMoviePageData));
-  
+
       var favoritesIndexToRemove = favoritesArray.indexOf(titleToRemove);
       if (favoritesIndexToRemove !== -1) {
         favoritesArray.splice(favoritesIndexToRemove, 1);
         console.log(favoritesArray);
         localStorage.setItem('favoritesArray', JSON.stringify(favoritesArray));
       }
-  
+
       // Remove the list item from the DOM
       $(event.target).closest('li').remove();
     }
   }
-  
-  $(document).on('click', '.remove-button',function(){
+
+  $(document).on('click', '.remove-button', function () {
     var titleToRemove = $(this).prev().text().trim();
     console.log(titleToRemove)
     remove(titleToRemove);
-   
+
   });
-  
-    movieData = JSON.parse(localStorage.getItem('movieData')) || [];
-    console.log(movieData)
-    // Function to update the movie details on the page
-    function updateMovieDetails(data) {
-      $('#movieDetails-title').text(data.Title);
-      $('#movieDetails-poster').attr('src', data.Poster);
-      $('#movieDetails-plot').text("Description : " + data.Plot);
-      $('#movieDetails-year').text("Year : " + data.Year);
-      $('#movieDetails-director').text("Director : " + data.Director);
-      $('#movieDetails-actors').text("Actors : " + data.Actors);
-      $('#movieDetails-writer').text("Writer : " + data.Writer);
-      $('#movieDetails-date').text("Released Date : " + data.Released);
-      $('#movieDetails-genre').text("Genre : " + data.Genre);
-      $('#movieDetails-lang').text("Language : " + data.Language);
-      $('#movieDetails-countary').text("Country : " + data.Country);
-    }
-  
-    if (movieData.length > 0) {
-      // If movieData is already available in local storage, update the details
-      updateMovieDetails(movieData[0]);
-    }
-  
-  
-    $("#search-input").on("keyup", function (e) {
-      // First, clear previous search results
-      clearSearchResults();
-      // Then, fetch the movie details and update the page when resolved
-      movieDetails(e.target.value)
-        .then(function (data) {
-          updateMovieDetails(data);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-    });
-  
+
+  movieData = JSON.parse(localStorage.getItem('movieData')) || [];
+  console.log(movieData)
+  // Function to update the movie details on the page
+  function updateMovieDetails(data) {
+    $('#movieDetails-title').text(data.Title);
+    $('#movieDetails-poster').attr('src', data.Poster);
+    $('#movieDetails-plot').text("Description : " + data.Plot);
+    $('#movieDetails-year').text("Year : " + data.Year);
+    $('#movieDetails-director').text("Director : " + data.Director);
+    $('#movieDetails-actors').text("Actors : " + data.Actors);
+    $('#movieDetails-writer').text("Writer : " + data.Writer);
+    $('#movieDetails-date').text("Released Date : " + data.Released);
+    $('#movieDetails-genre').text("Genre : " + data.Genre);
+    $('#movieDetails-lang').text("Language : " + data.Language);
+    $('#movieDetails-countary').text("Country : " + data.Country);
+  }
+
+  if (movieData.length > 0) {
+    // If movieData is already available in local storage, update the details
+    updateMovieDetails(movieData[0]);
+  }
 
 
-  
+  $("#search-input").on("keyup", function (e) {
+    // First, clear previous search results
+    clearSearchResults();
+    // Then, fetch the movie details and update the page when resolved
+    movieDetails(e.target.value)
+      .then(function (data) {
+        updateMovieDetails(data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  });
+
+
+
+
   // Retrieve the favorite movies from local storage
   favMoviePageData = JSON.parse(localStorage.getItem('favMoviePageData')) || [];
   console.log(favMoviePageData)
   // Display the favorite movies on the page
   var ulFavPage = $('#favorite-movies-fav-page');
-  for (var i = 0; i < favMoviePageData.length; i ++) {
+  for (var i = 0; i < favMoviePageData.length; i++) {
     const obj = favMoviePageData[i];
-  const favTitle = obj.favTitle;
-  const favURL = obj.favURL;
-   
-    var newLiFavPage = $('<li>',{
-      class:"favList"
+    const favTitle = obj.favTitle;
+    const favURL = obj.favURL;
+
+    var newLiFavPage = $('<li>', {
+      class: "favList"
     });
     var imgFavPage = $('<img>', {
       src: favURL,
@@ -131,8 +130,8 @@ $('#movie-poster').hide();
       text: 'Remove',
       class: 'remove-button'
     });
-    var Title = $('<div>',{
-      text : favTitle
+    var Title = $('<div>', {
+      text: favTitle
     })
     newLiFavPage.append(imgFavPage);
     newLiFavPage.append(Title);
@@ -174,12 +173,12 @@ likedMovies = JSON.parse(localStorage.getItem('likedMovies')) || [];
 
 function movieDetails(titleName) {
   console.log(titleName)
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     var Request = new XMLHttpRequest();
-    Request.onload = function() {
+    Request.onload = function () {
       responseJSON = JSON.parse(Request.response);
       localStorage.removeItem('movieData')
-      movieData  = [];
+      movieData = [];
       movieData.push(responseJSON);
       console.log(movieData)
       // Store the responseJSON in local storage
@@ -187,7 +186,7 @@ function movieDetails(titleName) {
       resolve(responseJSON); // Resolve the Promise with the responseJSON
     };
 
-    Request.onerror = function() {
+    Request.onerror = function () {
       reject(new Error('Failed to fetch movie details.'));
     };
 
@@ -200,165 +199,172 @@ function movieDetails(titleName) {
   });
 }
 
-
-// search result 
-function searchResult(e){
-  clearSearchResults(); // Clear previous search results
-   // Clear the previous error message
-   $('#notFound').text('');
-  var Req = new XMLHttpRequest();
-  Req.onload = function(){
-  // console.log(Req.response);
-  resJSON = JSON.parse(Req.response);
-  console.log(resJSON);
-
-   // Check if the movie is not already in the searchArr (by checking the title)
-   var isUnique = searchArr.every(function (movie) {
-    return movie.Title !== resJSON.Title;
-  });
-
-  if (isUnique) {
-    // Add the result to the searchArr
-    searchArr.push(resJSON);
-  }
-  console.log(searchArr);
-  // Clear previous search results
-  clearSearchResults();
-  
-  
-    // Get the value on keydown event
-    title = e.target.value;
-    console.log(title);
-    var searchUl = $('#movie-search');
-
-  
-    searchArr.forEach(function (movie) {
-      console.log(!movie.Error);
-      if(!movie.Error){
-        console.log(movie)
+function displaySearchResults() {
+  var searchArr = JSON.parse(localStorage.getItem('searchArr')) || [];
+  var searchUl = $('#movie-search');
+  searchUl.empty(); // Clear previous search results
+  searchArr.forEach(function (movie) {
+    console.log(!movie.Error);
+    if (!movie.Error) {
+      console.log(movie)
       var movieSearchTitle = movie.Title;
       var movieSearchImg = movie.Poster;
       var movieSearchYear = movie.Year;
       var movieSearchDirector = movie.Director;
       var movieSearchGenre = movie.Genre;
-  
+
       var searchCard = $('<div>', {
         class: 'card cardDiv',
         style: 'width: 10rem;'
       });
-  
+
       var image = $('<img>', {
         src: movieSearchImg,
         class: 'card-img-top img',
         alt: 'Movie Poster'
       });
-  
+
       var cardBody = $('<div>', {
         class: 'card-body cardContent'
       });
-  
+
       var cardTitle = $('<h5>', {
         class: 'card-title cardHeading',
         text: movieSearchTitle
       });
-  
+
       var cardText = $('<p>', {
         class: 'card-text text',
         text: `Year: ${movieSearchYear}, Director: ${movieSearchDirector}, Genre: ${movieSearchGenre}`
       });
-  
-     
+
+
       var goSomewhereLink = $('<a>', {
         href: 'http://127.0.0.1:5500/movie-details.html',
         class: 'btn btn-primary cardBtn',
         text: 'Details',
-        click: function(event) {
+        click: function (event) {
           // Prevent the default anchor behavior
           event.preventDefault();
-      
+
           // Call the movieDetails function immediately
           movieDetails(movie.Title);
-      
+
           // Wait for 2 seconds (2000 milliseconds) before navigating to the URL
-          setTimeout(function() {
+          setTimeout(function () {
             // Replace 'window.location.href' with the URL where you want to navigate after the delay
             window.location.href = 'http://127.0.0.1:5500/movie-details.html';
           }, 2000);
         }
       });
-      
+
       var likeButton = $('<div>', {
-        html:'<i class="bi bi-heart"></i>',
+        html: '<i class="bi bi-heart"></i>',
         class: 'like-button',
-        click: function() {
-          if (!likedMovies.includes(movie) ) {
+        click: function () {
+          if (!likedMovies.includes(movie)) {
             likeMovie(movie);
             $(this).html('<i class="bi bi-heart-fill"></i>');
-            addFavBtn(movie); 
+            addFavBtn(movie);
           } else {
             unlikeMovie(movie);
             $(this).html('<i class="bi bi-heart"></i>');
             console.log(movie)
-           var titleToRemove = movie.Title;
-          
-              console.log(titleToRemove);
+            var titleToRemove = movie.Title;
+
+            console.log(titleToRemove);
+            console.log(favMoviePageData);
+
+            var indexToRemove = favMoviePageData.findIndex(function (movie) {
+              return movie.favTitle === titleToRemove;
+            });
+
+            if (indexToRemove !== -1) {
+              favMoviePageData.splice(indexToRemove, 1);
               console.log(favMoviePageData);
-            
-              var indexToRemove = favMoviePageData.findIndex(function (movie) {
-                return movie.favTitle === titleToRemove;
-              });
-            
-              if (indexToRemove !== -1) {
-                favMoviePageData.splice(indexToRemove, 1);
-                console.log(favMoviePageData);
-                localStorage.setItem('favMoviePageData', JSON.stringify(favMoviePageData));
-            
-                var favoritesIndexToRemove = favoritesArray.indexOf(titleToRemove);
-                if (favoritesIndexToRemove !== -1) {
-                  favoritesArray.splice(favoritesIndexToRemove, 1);
-                  console.log(favoritesArray);
-                  localStorage.setItem('favoritesArray', JSON.stringify(favoritesArray));
-                }
-            
-                // Remove the list item from the DOM
-                $(event.target).closest('li').remove();
+              localStorage.setItem('favMoviePageData', JSON.stringify(favMoviePageData));
+
+              var favoritesIndexToRemove = favoritesArray.indexOf(titleToRemove);
+              if (favoritesIndexToRemove !== -1) {
+                favoritesArray.splice(favoritesIndexToRemove, 1);
+                console.log(favoritesArray);
+                localStorage.setItem('favoritesArray', JSON.stringify(favoritesArray));
               }
-            
+
+              // Remove the list item from the DOM
+              $(event.target).closest('li').remove();
+            }
+
           }
         }
       });
-       // Check if the movie is in favorites and set the heart icon accordingly
-       if (isMovieInFavorites(movie.Title)) {
+      // Check if the movie is in favorites and set the heart icon accordingly
+      if (isMovieInFavorites(movie.Title)) {
         likeButton.html('<i class="bi bi-heart-fill"></i>');
       }
       cardBody.append(cardTitle);
       cardBody.append(cardText);
       cardBody.append(goSomewhereLink);
       cardBody.append(likeButton);
-  
+
       searchCard.append(image);
       searchCard.append(cardBody);
-  
-      var searchLi = $('<li>',{
+
+      var searchLi = $('<li>', {
         style: 'margin: 20px; box-shadow:rgb(137 137 136 / 40%) -5px 5px, rgb(121 121 121 / 30%) -10px 10px, rgb(109 109 108 / 20%) -15px 15px, rgb(129 129 129 / 10%) -20px 20px, rgb(101 101 100 / 8%) -25px 25px;'
-      
+
       });
       searchLi.append(searchCard);
-  
+
       searchUl.append(searchLi);
-    }else{
+    } else {
       console.log(movie)
-      if(movie.Response==false){
-      $('#notFound').text(movie.Error)
+      if (movie.Response == false) {
+        $('#notFound').text(movie.Error)
       }
     }
-    }); 
+  });
+}
+// search result 
+function searchResult(e) {
+  clearSearchResults(); // Clear previous search results
+  // Clear the previous error message
+  $('#notFound').text('');
+  var Req = new XMLHttpRequest();
+  Req.onload = function () {
+    // console.log(Req.response);
+    resJSON = JSON.parse(Req.response);
+    console.log(resJSON);
+
+    // Check if the movie is not already in the searchArr (by checking the title)
+    var isUnique = searchArr.every(function (movie) {
+      return movie.Title !== resJSON.Title;
+    });
+
+    if (isUnique) {
+      // Add the result to the searchArr
+      searchArr.push(resJSON);
+    }
+    console.log(searchArr);
+    // Store the search results in local storage
+    localStorage.setItem('searchArr', JSON.stringify(searchArr));
+
+
+    // Clear previous search results
+    clearSearchResults();
+
+
+    // Get the value on keydown event
+    title = e.target.value;
+    console.log(title);
+
+    displaySearchResults();
   }
 
-  Req.open('get',`http://www.omdbapi.com/?i=tt3896198&apikey=fc60a832&t=${title}`,true);
+  Req.open('get', `http://www.omdbapi.com/?i=tt3896198&apikey=fc60a832&t=${title}`, true);
   Req.send();
 
-  
+
 }
 
 
@@ -395,14 +401,14 @@ function addFavBtn(movie) {
 
   if (!isMovieInFavorites(movieTitle)) {
     favMoviePageDataObj = {
-      favTitle:movieTitle,
-      favURL:url
+      favTitle: movieTitle,
+      favURL: url
     }
     $(".toast-body").text(`${movieTitle} has added in your favorite movies `)
-      favMoviePageData.push(favMoviePageDataObj);
+    favMoviePageData.push(favMoviePageDataObj);
     favoritesArray.push(movieTitle); // Add the movie title to the favorites array
-       console.log(favoritesArray)
- 
+    console.log(favoritesArray)
+
     var newLi = $('<li>');
     var img = $('<img>', {
       src: url,
@@ -419,77 +425,90 @@ function addFavBtn(movie) {
     ul.append(newLi);
     localStorage.setItem('favoritesArray', JSON.stringify(favoritesArray));
     localStorage.setItem('favMoviePageData', JSON.stringify(favMoviePageData));
-  }else{
+  } else {
     $(".toast-body").text(`${movieTitle} is already added in your favorite movies `);
   }
 }
-$('#add-favorite').on('click', function() {
+$('#add-favorite').on('click', function () {
   addFavBtn(responseJSON);
 });
 
 // ajax code 
 
-function fetchMovie(){
-   
-        console.log(title); // Output the stored value
-        var Request = new XMLHttpRequest();
-        Request.onload = function(){
-        // console.log(Request.response);
-        responseJSON = JSON.parse(Request.response);
-        // console.log(responseJSON);
-        localStorage.removeItem('searchedResult');
-        searchedResult = [];
-        searchedResult.push(responseJSON);
-        console.log(searchedResult)
-//  check if the Error property exists in any of the objects in the array
-        var hasErrorProperty = false;
+function fetchMovie() {
 
-searchedResult.forEach(function(movie) {
-  if ("Error" in movie) {
-    hasErrorProperty = true;
-  }
-});
-console.log(hasErrorProperty);
-console.log(!hasErrorProperty);
-if(hasErrorProperty){
-  $('#notFound').text(responseJSON.Error)
-}
-if(!hasErrorProperty){
-  $('#add-favorite').show(); // show the "Add to Favorite" button when no input
-  $("#go-detailspage").show();
-  $('#movie-poster').show();
-  $('#movie-title').show();
-  $('#movie-year').show();
-  $('#movie-director').show();
-  $('#movie-genre').show();
+  console.log(title); // Output the stored value
+  var Request = new XMLHttpRequest();
+  Request.onload = function () {
+    // console.log(Request.response);
+    responseJSON = JSON.parse(Request.response);
+    // console.log(responseJSON);
+    localStorage.removeItem('searchedResult');
+    searchedResult = [];
+    searchedResult.push(responseJSON);
+    console.log(searchedResult)
+    //  check if the Error property exists in any of the objects in the array
+    var hasErrorProperty = false;
 
-}else{
-
-  $('#add-favorite').hide(); // Hide the "Add to Favorite" button when no input
-  $("#go-detailspage").hide();
-  $('#movie-poster').hide();
-  $('#movie-title').hide();
-  $('#movie-year').hide();
-  $('#movie-director').hide();
-  $('#movie-genre').hide();
-}
-        $('#movie-title').text(responseJSON.Title);
-        $('#movie-poster').attr('src',responseJSON.Poster);
-        $('#movie-plot').text(responseJSON.Plot);
-        $('#movie-year').text("Relesed Year : "+ responseJSON.Year);
-        $('#movie-director').text("Director : " + responseJSON.Director);
-        $('#movie-genre').text("Genre : " + responseJSON.Genre);
-        
-        localStorage.setItem('searchedResult', JSON.stringify(searchedResult)); 
+    searchedResult.forEach(function (movie) {
+      if ("Error" in movie) {
+        hasErrorProperty = true;
+      }
+    });
+    console.log(hasErrorProperty);
+    console.log(!hasErrorProperty);
+    if (hasErrorProperty) {
+      $('#notFound').text(responseJSON.Error)
     }
-    Request.open('get',`http://www.omdbapi.com/?i=tt3896198&apikey=fc60a832&t=${title}`,true);
-    Request.send();
-}
+    if (!hasErrorProperty) {
+      $('#add-favorite').show(); // show the "Add to Favorite" button when no input
+      $("#go-detailspage").show();
+      $('#movie-poster').show();
+      $('#movie-title').show();
+      $('#movie-year').show();
+      $('#movie-director').show();
+      $('#movie-genre').show();
 
+    } else {
+
+      $('#add-favorite').hide(); // Hide the "Add to Favorite" button when no input
+      $("#go-detailspage").hide();
+      $('#movie-poster').hide();
+      $('#movie-title').hide();
+      $('#movie-year').hide();
+      $('#movie-director').hide();
+      $('#movie-genre').hide();
+    }
+    $('#movie-title').text(responseJSON.Title);
+    $('#movie-poster').attr('src', responseJSON.Poster);
+    $('#movie-plot').text(responseJSON.Plot);
+    $('#movie-year').text("Relesed Year : " + responseJSON.Year);
+    $('#movie-director').text("Director : " + responseJSON.Director);
+    $('#movie-genre').text("Genre : " + responseJSON.Genre);
+
+    localStorage.setItem('searchedResult', JSON.stringify(searchedResult));
+    console.log(searchedResult)
+  }
+  Request.open('get', `http://www.omdbapi.com/?i=tt3896198&apikey=fc60a832&t=${title}`, true);
+  Request.send();
+}
+function displaySearchedMovie() {
+  var searchedResult = JSON.parse(localStorage.getItem('searchedResult')) || [];
+  console.log(searchedResult)
+  // localStorage.removeItem('movieData'); // Clear previous movie details from local storage
+
+
+  $('#movie-title').text(searchedResult[0].Title);
+  $('#movie-poster').attr('src', searchedResult[0].Poster);
+  $('#movie-plot').text(searchedResult[0].Plot);
+  $('#movie-year').text("Relesed Year : " + searchedResult[0].Year);
+  $('#movie-director').text("Director : " + searchedResult[0].Director);
+  $('#movie-genre').text("Genre : " + searchedResult[0].Genre);
+}
 $('#searchBtn').click(fetchMovie);
 
 
- // Toasts
+// Toasts
 const toastTrigger = document.getElementById('add-favorite')
 const toastLiveExample = document.getElementById('liveToast')
 
